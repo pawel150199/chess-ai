@@ -6,6 +6,8 @@ from game import Game
 from square import Square
 from move import Move
 
+from configuration import Config
+
 
 class Main:
     def __init__(self):
@@ -21,15 +23,18 @@ class Main:
         dragger = self.game.dragger
 
         while True:
-            game.show_backgroud(screen)
+            game.show_background(screen)
+            game.show_last_move(screen)
             game.show_moves(screen)
             game.show_pieces(screen)
+            game.show_hover(screen)
 
             if dragger.dragging:
                 dragger.update_blit(screen)
 
             for event in pygame.event.get():
 
+                # mouse click
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     dragger.update_mouse(event.pos)
 
@@ -38,21 +43,37 @@ class Main:
 
                     if board.squares[clicked_row][clicked_col].has_piece():
                         piece = board.squares[clicked_row][clicked_col].piece
-                        board.calc_moves(piece, clicked_row, clicked_col)
-                        dragger.save_initial(event.pos)
-                        dragger.drag_piece(piece)
-                        game.show_backgroud(screen)
-                        game.show_moves(screen)
-                        game.show_pieces(screen)
+                        if piece.color == game.next_player:
+                            board.calc_moves(piece, clicked_row, clicked_col, bool=True)
+                            dragger.save_initial(event.pos)
+                            dragger.drag_piece(piece)
 
+                            # show methods on screen
+                            game.show_background(screen)
+                            game.show_last_move(screen)
+                            game.show_moves(screen)
+                            game.show_pieces(screen)
+
+            
+                # mouse movement
                 elif event.type == pygame.MOUSEMOTION:
+                    motion_row = event.pos[1] // SQSIZE
+                    motion_col = event.pos[0] // SQSIZE
+
+                    game.set_hover(motion_row, motion_col)
+
                     if dragger.dragging:
                         dragger.update_mouse(event.pos)
-                        game.show_backgroud(screen)
+
+                        # show methods on screen
+                        game.show_background(screen)
+                        game.show_last_move(screen)
                         game.show_moves(screen)
                         game.show_pieces(screen)
+                        game.show_hover(screen)
                         dragger.update_blit(screen)
 
+                # mouse release button
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if dragger.dragging:
                         dragger.update_mouse(event.pos)
@@ -60,19 +81,23 @@ class Main:
                         released_col = dragger.mouseX //SQSIZE
 
                         # create possible move
-                        initial_position  = Square(dragger.initial_row, dragger.initial_col)
-                        final_position  = Square(released_row, released_col)
-
-                        move = Move(initial_position, final_position)
+                        initial_square  = Square(dragger.initial_row, dragger.initial_col)
+                        final_square  = Square(released_row, released_col)
+                        move = Move(initial_square, final_square)
                         
                         # check if it is valid move
                         if board.valid_move(dragger.piece, move):
                             print("valid move")
+                            captured = board.squares[released_row][released_col].has_piece()
                             board.move(dragger.piece, move)
 
-                            # draw move
-                            game.show_backgroud(screen)
+                            board.set_true_en_passant(dragger.piece)  
+
+                            game.show_background(screen)
+                            game.show_last_move(screen)
                             game.show_pieces(screen)
+                            # next turn
+                            game.next_turn()
 
                     dragger.undrag_piece(piece)
 
