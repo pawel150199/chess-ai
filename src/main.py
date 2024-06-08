@@ -83,7 +83,7 @@ class Main:
         looping = True
         restart_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 100, self.button_width, self.button_height)
         exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 205, self.button_width, self.button_height)
-        winner = self.game.next_player
+        winner = "black" if self.game.next_player == "white" else "white"
 
         while looping:
             self.screen.fill(self.lgray)
