@@ -1,4 +1,4 @@
-name: Tox Linter
+name: Check code quality
 
 on:
   push:
