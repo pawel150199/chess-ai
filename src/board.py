@@ -111,7 +111,7 @@ class Board:
     
     def _pawn_moves(self, piece, row, col, bool=True):
         steps = 1 if piece.moved else 2
-
+        
         # vertical moves
         start = row + piece.dir
         end = row + (piece.dir * (1 + steps))
@@ -149,6 +149,7 @@ class Board:
                             piece.add_moves(move)
                     else:
                         piece.add_moves(move)
+
 
         # en passant moves
         r = 3 if piece.color == 'white' else 4

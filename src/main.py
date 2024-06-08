@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 
 from const import WIDTH, HEIGHT, ROWS, COLS, SQSIZE
 from game import Game
@@ -15,6 +16,77 @@ class Main:
         self.screen = pygame.display.set_mode( (WIDTH, HEIGHT) )
         pygame.display.set_caption('Chess game with AI')
         self.game = Game()
+        self.game_started = False
+
+        # colors
+        self.white = (255, 255, 255)
+        self.black = (0, 0, 0)
+        self.gray = (100, 100, 100)
+
+        self.font = pygame.font.Font(None, 90)
+        self.button_font = pygame.font.Font(None, 90)
+            
+        # colors
+        self.green = (0, 255, 0)
+        self.black = (0, 0, 0)
+        self.gray = (100, 100, 100)
+
+        self.font = pygame.font.Font(None, 90)
+        self.button_font = pygame.font.Font(None, 60)
+
+        # Button dimensions
+        self.button_width = 400
+        self.button_height = 100
+
+        # Button positions
+        self.start_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 25, self.button_width, self.button_height)
+        self.exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 150, self.button_width, self.button_height)
+    
+    def draw_text(self, text, font, color, surface, x, y):
+        textobj = font.render(text, True, color)
+        textrect = textobj.get_rect(center=(x, y))
+        surface.blit(textobj, textrect)
+
+    def _draw_logo(self, surface):
+        current_directory = os.path.dirname(__file__)
+        parent_directory = os.path.dirname(current_directory)
+
+        texture = os.path.join(
+            f'{parent_directory}/assets/chess.jpeg'
+        )
+
+        img = pygame.transform.scale(pygame.image.load(texture), (250, 250))
+
+        img_center = (400, 200)
+        texture_rect = img.get_rect(center=img_center)
+        surface.blit(img, texture_rect)
+    
+    def landing_menu(self):
+        while not self.game_started:
+            self.screen.fill(self.green)
+            self._draw_logo(self.screen)
+            
+            pygame.draw.rect(self.screen, self.gray, self.start_button_rect)
+            pygame.draw.rect(self.screen, self.gray, self.exit_button_rect)
+            
+            self.draw_text('Start Game', self.button_font, self.black, self.screen, self.start_button_rect.centerx, self.start_button_rect.centery)
+            self.draw_text('Exit', self.button_font, self.black, self.screen, self.exit_button_rect.centerx, self.exit_button_rect.centery)
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.start_button_rect.collidepoint(event.pos):
+                        print("Start Game clicked")
+                        self.game_started = True
+                    
+  
+                    if self.exit_button_rect.collidepoint(event.pos):
+                        pygame.quit()
+                        sys.exit()
+            
+            pygame.display.update()
 
     def mainloop(self):
         screen = self.screen
@@ -22,7 +94,10 @@ class Main:
         board = self.game.board
         dragger = self.game.dragger
 
-        while True:
+        if  not self.game_started:
+            self.landing_menu()
+
+        while self.game_started:
             game.show_background(screen)
             game.show_last_move(screen)
             game.show_moves(screen)
@@ -99,7 +174,7 @@ class Main:
                             # next turn
                             game.next_turn()
 
-                    dragger.undrag_piece(piece)
+                    dragger.undrag_piece(dragger.piece)
 
                 elif event.type == pygame.QUIT:
                     pygame.quit()

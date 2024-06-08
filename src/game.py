@@ -40,7 +40,7 @@ class Game:
     def show_moves(self, surface):
         if self.dragger.dragging:
             piece = self.dragger.piece
-            print(piece.moves)
+            #print(piece.moves)
             for move in piece.moves:
                 color = '#C86464' if (move.final_square.row + move.final_square.col) % 2 == 0 else '#C84646'
                 rect = (move.final_square.col * SQSIZE, move.final_square.row * SQSIZE, SQSIZE, SQSIZE)

@@ -29,7 +29,7 @@ class Piece:
 
 class Pawn(Piece):
     def __init__(self, color):
-        self.dir = 1 if color == 'white' else -1
+        self.dir = -1 if color == 'white' else 1
         super().__init__(name='pawn', color=color, value=1.0)
 
 class Knight(Piece):
