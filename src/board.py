@@ -185,7 +185,7 @@ class Board:
                         move = Move(initial_square, final_square)
                         
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move, bool=True):
                                 piece.add_moves(move)
                         else:
                             piece.add_moves(move)
