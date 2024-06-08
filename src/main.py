@@ -26,8 +26,8 @@ class Main:
         self.gray = (100, 100, 100)
         self.lgray = (212, 217, 219)
 
-        self.font = pygame.font.Font(None, 90)
-        self.button_font = pygame.font.Font(None, 60)
+        self.font = pygame.font.Font(None, 70)
+        self.button_font = pygame.font.Font(None, 70)
 
         # Button dimensions
         self.button_width = 400
@@ -46,7 +46,7 @@ class Main:
             f'{parent_directory}/assets/chess.png'
         )
 
-        img = pygame.transform.scale(pygame.image.load(texture), (250, 350))
+        img = pygame.transform.scale(pygame.image.load(texture), (250, 320))
 
         img_center = (400, 200)
         texture_rect = img.get_rect(center=img_center)
@@ -70,9 +70,9 @@ class Main:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if start_button_rect.collidepoint(event.pos):
-                        print("Start Game clicked")
                         self.game_started = True
   
                     if exit_button_rect.collidepoint(event.pos):
@@ -84,12 +84,14 @@ class Main:
     def end_menu(self):
         looping = True
         restart_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 100, self.button_width, self.button_height)
-        exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 200, self.button_width, self.button_height)
+        exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 205, self.button_width, self.button_height)
+        winner = self.game.next_player
 
         while looping:
             self.screen.fill(self.lgray)
             self._draw_logo(self.screen)
-            self.draw_text('SHACH MAT - GAME OVER', self.button_font, self.black, self.screen, self.screen.get_width() // 2, self.screen.get_height() // 2)
+            self.draw_text(f'{winner.upper()} WON THE GAME', self.button_font, self.black, self.screen, self.screen.get_width() // 2, (self.screen.get_height() // 2) + 15)
+            pygame.draw.rect(self.screen, self.gray, restart_button_rect)
             pygame.draw.rect(self.screen, self.gray, exit_button_rect)
                 
             self.draw_text('Try Again', self.button_font, self.black, self.screen, restart_button_rect.centerx, restart_button_rect.centery)
@@ -103,7 +105,6 @@ class Main:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if restart_button_rect.collidepoint(event.pos):
-                        print("Restart Game clicked")
                         looping = False
 
                     if exit_button_rect.collidepoint(event.pos):
@@ -193,7 +194,6 @@ class Main:
                         
                         # check if it is valid move
                         if board.valid_move(dragger.piece, move):
-                            # print("valid move")
                             captured = board.squares[released_row][released_col].has_piece()
                             board.move(dragger.piece, move)
 
@@ -208,7 +208,6 @@ class Main:
 
                     dragger.undrag_piece(dragger.piece)
 
-                print(board.checkmate)
                 if board.checkmate:
                     self.end_menu()
                     game.reset()
