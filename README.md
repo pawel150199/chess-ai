@@ -9,5 +9,3 @@ To run the board do these steps:
 ## AI
 * MiniMax algorithm
 
-## List of bugs
-* Figures after move are duplicated
