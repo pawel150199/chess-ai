@@ -1,8 +1,10 @@
 from square import Square
 from move import Move
 from piece import Bishop, Pawn, King, Knight, Queen, Rook
+from exception import CheckmateException
 from const import WIDTH, HEIGHT, ROWS, COLS, SQSIZE
 import copy
+import pygame
 
 
 class Board:
@@ -130,7 +132,9 @@ class Board:
                     else:
                         piece.add_moves(move)
                 else: break
-            else: break
+            else: 
+                print('szach mat_3')
+                raise CheckmateException()
 
         # diagonal moves
         possible_move_row = row + piece.dir
@@ -148,6 +152,9 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move, bool):
                             piece.add_moves(move)
+                        else:
+                            print('szach mat_4')
+                            raise CheckmateException()
                     else:
                         piece.add_moves(move)
 
@@ -170,6 +177,9 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move, bool):
                                 piece.add_moves(move)
+                            else:
+                                print('szach mat_5')
+                                raise CheckmateException()
                         else:
                             piece.add_moves(move)
         
@@ -187,6 +197,9 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move, bool):
                                 piece.add_moves(move)
+                            else:
+                                print('szach mat_6')
+                                raise CheckmateException()
                         else:
                             piece.add_moves(move)
 
@@ -343,6 +356,9 @@ class Board:
                                 if not self.in_check(piece, moveK, bool) and not self.in_check(right_rook, moveR, bool):
                                     right_rook.add_moves(moveR)
                                     piece.add_moves(moveK)
+                                else:
+                                    print('szach mat_1')
+                                    raise CheckmateException()
                             else:
                                 right_rook.add_moves(moveR)
                                 piece.add_moves(moveK)
@@ -365,10 +381,13 @@ class Board:
                     if self.squares[possible_move_row][possible_move_col].isempty():
                         if bool:
                             if not self.in_check(piece, move, bool):
-                                print(move)
+                                # print(move)
                                 piece.add_moves(move)
+                            else:
+                                print('szach mat_2')
+                                raise CheckmateException()
                         else:
-                            print(move)
+                            # print(move)
                             piece.add_moves(move)
 
                     # if there is rival piece go and break loop
