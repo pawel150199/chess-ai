@@ -13,7 +13,7 @@ class Game:
         self.board = Board()
         self.dragger = Dragger()
         self.config = Config()
-    
+
     def show_background(self, surface):
         for row in range(ROWS):
             for col in range(COLS):
@@ -21,10 +21,10 @@ class Game:
                     color = GREEN
                 else:
                     color = WHITE
-                
+
                 rect = (col * SQSIZE, row * SQSIZE, SQSIZE, SQSIZE)
                 pygame.draw.rect(surface, color, rect)
-    
+
     def show_pieces(self, surface):
         for row in range(ROWS):
             for col in range(COLS):
@@ -36,7 +36,7 @@ class Game:
                         img_center = col * SQSIZE  + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
                         piece.texture_rect = img.get_rect(center = img_center)
                         surface.blit(img, piece.texture_rect)
-    
+
     def show_moves(self, surface):
         if self.dragger.dragging:
             piece = self.dragger.piece
@@ -45,7 +45,7 @@ class Game:
                 color = '#C86464' if (move.final_square.row + move.final_square.col) % 2 == 0 else '#C84646'
                 rect = (move.final_square.col * SQSIZE, move.final_square.row * SQSIZE, SQSIZE, SQSIZE)
                 pygame.draw.rect(surface, color, rect)
-    
+
     def show_last_move(self, surface):
         theme = self.config.theme
 
