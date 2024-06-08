@@ -5,13 +5,18 @@ from const import WIDTH, HEIGHT, ROWS, COLS, SQSIZE
 import copy
 
 
+
 class Board:
     def __init__(self) -> None:
         self.squares = [[0,0,0,0,0,0,0,0] for col in range(COLS)]
         self.last_move = None
+        self.checkmate = False
         self._create()
         self._add_pieces('white')
         self._add_pieces('black')
+    
+    def check_checkmate(self):
+        return self.checkmate
     
     def move(self, piece, move):
         initial_square = move.initial_square
@@ -19,7 +24,7 @@ class Board:
 
         en_passant_empty = self.squares[final_square.row][final_square.col].isempty()
 
-        # debug info wit hconsole move update
+        # debug info with console move update
         self.squares[initial_square.row][initial_square.col].piece = None
         self.squares[final_square.row][final_square.col].piece = piece
 
@@ -44,7 +49,6 @@ class Board:
 
         # move
         piece.moved = True
-        print("XD")
 
         # clear valid moves
         piece.clear_moves()
@@ -82,6 +86,7 @@ class Board:
                             return True
         
         return False
+    
     
     def check_promotion(self, piece, final_position):
         if final_position.row == 0 or final_position.row == 7:
@@ -130,7 +135,8 @@ class Board:
                     else:
                         piece.add_moves(move)
                 else: break
-            else: break
+            else: 
+                self.checkmate = True
 
         # diagonal moves
         possible_move_row = row + piece.dir
@@ -148,6 +154,8 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move, bool):
                             piece.add_moves(move)
+                        else:
+                            self.checkmate = True
                     else:
                         piece.add_moves(move)
 
@@ -170,6 +178,8 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move, bool):
                                 piece.add_moves(move)
+                            else:
+                                self.checkmate = True
                         else:
                             piece.add_moves(move)
         
@@ -187,6 +197,8 @@ class Board:
                         if bool:
                             if not self.in_check(piece, move, bool):
                                 piece.add_moves(move)
+                            else:
+                                self.checkmate = True
                         else:
                             piece.add_moves(move)
 
@@ -280,7 +292,8 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move, bool):
                             piece.add_moves(move)
-                        else: break
+                        else: 
+                            self.checkmate = True
                     else:
                         piece.add_moves(move)
 
@@ -343,6 +356,8 @@ class Board:
                                 if not self.in_check(piece, moveK, bool) and not self.in_check(right_rook, moveR, bool):
                                     right_rook.add_moves(moveR)
                                     piece.add_moves(moveK)
+                                else:
+                                    self.checkmate = True
                             else:
                                 right_rook.add_moves(moveR)
                                 piece.add_moves(moveK)
@@ -365,10 +380,10 @@ class Board:
                     if self.squares[possible_move_row][possible_move_col].isempty():
                         if bool:
                             if not self.in_check(piece, move, bool):
-                                print(move)
                                 piece.add_moves(move)
+                            else:
+                                self.checkmate = True
                         else:
-                            print(move)
                             piece.add_moves(move)
 
                     # if there is rival piece go and break loop

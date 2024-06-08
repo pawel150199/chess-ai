@@ -17,6 +17,7 @@ class Main:
         pygame.display.set_caption('Chess game with AI')
         self.game = Game()
         self.game_started = False
+        self.show_exit_menu = False
 
         # colors
         self.white = (255, 255, 255)
@@ -31,10 +32,6 @@ class Main:
         # Button dimensions
         self.button_width = 400
         self.button_height = 100
-
-        # Button positions
-        self.start_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 25, self.button_width, self.button_height)
-        self.exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 150, self.button_width, self.button_height)
     
     def draw_text(self, text, font, color, surface, x, y):
         textobj = font.render(text, True, color)
@@ -56,30 +53,63 @@ class Main:
         surface.blit(img, texture_rect)
     
     def landing_menu(self):
+        start_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 25, self.button_width, self.button_height)
+        exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 150, self.button_width, self.button_height)
+
         while not self.game_started:
             self.screen.fill(self.lgray)
             self._draw_logo(self.screen)
             
-            pygame.draw.rect(self.screen, self.gray, self.start_button_rect)
-            pygame.draw.rect(self.screen, self.gray, self.exit_button_rect)
+            pygame.draw.rect(self.screen, self.gray, start_button_rect)
+            pygame.draw.rect(self.screen, self.gray, exit_button_rect)
             
-            self.draw_text('Start Game', self.button_font, self.black, self.screen, self.start_button_rect.centerx, self.start_button_rect.centery)
-            self.draw_text('Exit', self.button_font, self.black, self.screen, self.exit_button_rect.centerx, self.exit_button_rect.centery)
+            self.draw_text('Start Game', self.button_font, self.black, self.screen, start_button_rect.centerx, start_button_rect.centery)
+            self.draw_text('Exit', self.button_font, self.black, self.screen, exit_button_rect.centerx, exit_button_rect.centery)
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.start_button_rect.collidepoint(event.pos):
+                    if start_button_rect.collidepoint(event.pos):
                         print("Start Game clicked")
                         self.game_started = True
-                    
   
-                    if self.exit_button_rect.collidepoint(event.pos):
+                    if exit_button_rect.collidepoint(event.pos):
                         pygame.quit()
                         sys.exit()
             
+            pygame.display.update()
+    
+    def end_menu(self):
+        looping = True
+        restart_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 100, self.button_width, self.button_height)
+        exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 200, self.button_width, self.button_height)
+
+        while looping:
+            self.screen.fill(self.lgray)
+            self._draw_logo(self.screen)
+            self.draw_text('SHACH MAT - GAME OVER', self.button_font, self.black, self.screen, self.screen.get_width() // 2, self.screen.get_height() // 2)
+            pygame.draw.rect(self.screen, self.gray, exit_button_rect)
+                
+            self.draw_text('Try Again', self.button_font, self.black, self.screen, restart_button_rect.centerx, restart_button_rect.centery)
+            self.draw_text('Exit', self.button_font, self.black, self.screen, exit_button_rect.centerx, exit_button_rect.centery)
+
+                
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if restart_button_rect.collidepoint(event.pos):
+                        print("Restart Game clicked")
+                        looping = False
+
+                    if exit_button_rect.collidepoint(event.pos):
+                        pygame.quit()
+                        sys.exit()
+                        
             pygame.display.update()
 
     def mainloop(self):
@@ -122,7 +152,14 @@ class Main:
                             game.show_last_move(screen)
                             game.show_moves(screen)
                             game.show_pieces(screen)
-
+                
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        self.game.reset()
+                        screen = self.screen
+                        game = self.game
+                        board = self.game.board
+                        dragger = self.game.dragger
             
                 # mouse movement
                 elif event.type == pygame.MOUSEMOTION:
@@ -156,7 +193,7 @@ class Main:
                         
                         # check if it is valid move
                         if board.valid_move(dragger.piece, move):
-                            print("valid move")
+                            # print("valid move")
                             captured = board.squares[released_row][released_col].has_piece()
                             board.move(dragger.piece, move)
 
@@ -167,8 +204,18 @@ class Main:
                             game.show_pieces(screen)
                             # next turn
                             game.next_turn()
+                
 
                     dragger.undrag_piece(dragger.piece)
+
+                print(board.checkmate)
+                if board.checkmate:
+                    self.end_menu()
+                    game.reset()
+                    screen = self.screen
+                    game = self.game
+                    board = self.game.board
+                    dragger = self.game.dragger
 
                 elif event.type == pygame.QUIT:
                     pygame.quit()
