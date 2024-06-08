@@ -357,7 +357,6 @@ class Board:
                                     right_rook.add_moves(moveR)
                                     piece.add_moves(moveK)
                                 else:
-                                    print('szach mat_1')
                                     self.checkmate = True
                             else:
                                 right_rook.add_moves(moveR)
@@ -381,13 +380,10 @@ class Board:
                     if self.squares[possible_move_row][possible_move_col].isempty():
                         if bool:
                             if not self.in_check(piece, move, bool):
-                                # print(move)
                                 piece.add_moves(move)
                             else:
-                                print('szach mat_2')
                                 self.checkmate = True
                         else:
-                            # print(move)
                             piece.add_moves(move)
 
                     # if there is rival piece go and break loop
