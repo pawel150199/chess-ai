@@ -6,13 +6,13 @@ class Piece:
     def __init__(self, name, color, value, texture=None, texture_rec=None):
         self.name = name
         self.color = color
-        value_sign = 1 if color == 'white' else -1 
+        value_sign = 1 if color == 'white' else -1
         self.value = value * value_sign
         self.moves = []
         self.moved = False
         self.set_texture()
         self.texture_rec = texture_rec
-    
+
     def set_texture(self, size=80):
         current_directory = os.path.dirname(__file__)
         parent_directory = os.path.dirname(current_directory)
@@ -23,7 +23,7 @@ class Piece:
 
     def add_moves(self, move):
         self.moves.append(move)
-    
+
     def clear_moves(self):
         self.moves = []
 

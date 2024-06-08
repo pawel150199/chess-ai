@@ -5,7 +5,7 @@ HEIGHT = 800
 # Board dimensions
 ROWS = 8
 COLS = 8
-SQSIZE = WIDTH // COLS 
+SQSIZE = WIDTH // COLS
 
 # Colors
 GREEN = (234, 235, 200)

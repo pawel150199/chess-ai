@@ -7,8 +7,6 @@ from game import Game
 from square import Square
 from move import Move
 
-from configuration import Config
-
 
 class Main:
     def __init__(self):
@@ -32,7 +30,7 @@ class Main:
         # Button dimensions
         self.button_width = 400
         self.button_height = 100
-    
+
     def draw_text(self, text, font, color, surface, x, y):
         textobj = font.render(text, True, color)
         textrect = textobj.get_rect(center=(x, y))
@@ -51,7 +49,7 @@ class Main:
         img_center = (400, 200)
         texture_rect = img.get_rect(center=img_center)
         surface.blit(img, texture_rect)
-    
+
     def landing_menu(self):
         start_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 25, self.button_width, self.button_height)
         exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 150, self.button_width, self.button_height)
@@ -59,13 +57,13 @@ class Main:
         while not self.game_started:
             self.screen.fill(self.lgray)
             self._draw_logo(self.screen)
-            
+
             pygame.draw.rect(self.screen, self.gray, start_button_rect)
             pygame.draw.rect(self.screen, self.gray, exit_button_rect)
-            
+
             self.draw_text('Start Game', self.button_font, self.black, self.screen, start_button_rect.centerx, start_button_rect.centery)
             self.draw_text('Exit', self.button_font, self.black, self.screen, exit_button_rect.centerx, exit_button_rect.centery)
-            
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -74,13 +72,13 @@ class Main:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if start_button_rect.collidepoint(event.pos):
                         self.game_started = True
-  
+
                     if exit_button_rect.collidepoint(event.pos):
                         pygame.quit()
                         sys.exit()
-            
+
             pygame.display.update()
-    
+
     def end_menu(self):
         looping = True
         restart_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 100, self.button_width, self.button_height)
@@ -93,11 +91,11 @@ class Main:
             self.draw_text(f'{winner.upper()} WON THE GAME', self.button_font, self.black, self.screen, self.screen.get_width() // 2, (self.screen.get_height() // 2) + 15)
             pygame.draw.rect(self.screen, self.gray, restart_button_rect)
             pygame.draw.rect(self.screen, self.gray, exit_button_rect)
-                
+
             self.draw_text('Try Again', self.button_font, self.black, self.screen, restart_button_rect.centerx, restart_button_rect.centery)
             self.draw_text('Exit', self.button_font, self.black, self.screen, exit_button_rect.centerx, exit_button_rect.centery)
 
-                
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -110,7 +108,7 @@ class Main:
                     if exit_button_rect.collidepoint(event.pos):
                         pygame.quit()
                         sys.exit()
-                        
+
             pygame.display.update()
 
     def mainloop(self):
@@ -153,7 +151,7 @@ class Main:
                             game.show_last_move(screen)
                             game.show_moves(screen)
                             game.show_pieces(screen)
-                
+
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         self.game.reset()
@@ -161,7 +159,7 @@ class Main:
                         game = self.game
                         board = self.game.board
                         dragger = self.game.dragger
-            
+
                 # mouse movement
                 elif event.type == pygame.MOUSEMOTION:
                     motion_row = event.pos[1] // SQSIZE
@@ -191,20 +189,20 @@ class Main:
                         initial_square  = Square(dragger.initial_row, dragger.initial_col)
                         final_square  = Square(released_row, released_col)
                         move = Move(initial_square, final_square)
-                        
+
                         # check if it is valid move
                         if board.valid_move(dragger.piece, move):
                             captured = board.squares[released_row][released_col].has_piece()
                             board.move(dragger.piece, move)
 
-                            board.set_true_en_passant(dragger.piece)  
+                            board.set_true_en_passant(dragger.piece)
 
                             game.show_background(screen)
                             game.show_last_move(screen)
                             game.show_pieces(screen)
                             # next turn
                             game.next_turn()
-                
+
 
                     dragger.undrag_piece(dragger.piece)
 
@@ -221,4 +219,3 @@ class Main:
                     sys.exit()
 
             pygame.display.update()
-
