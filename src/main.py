@@ -20,16 +20,10 @@ class Main:
 
         # colors
         self.white = (255, 255, 255)
-        self.black = (0, 0, 0)
-        self.gray = (100, 100, 100)
-
-        self.font = pygame.font.Font(None, 90)
-        self.button_font = pygame.font.Font(None, 90)
-            
-        # colors
         self.green = (76, 153, 0)
         self.black = (0, 0, 0)
         self.gray = (100, 100, 100)
+        self.lgray = (212, 217, 219)
 
         self.font = pygame.font.Font(None, 90)
         self.button_font = pygame.font.Font(None, 60)
@@ -52,10 +46,10 @@ class Main:
         parent_directory = os.path.dirname(current_directory)
 
         texture = os.path.join(
-            f'{parent_directory}/assets/chess.jpeg'
+            f'{parent_directory}/assets/chess.png'
         )
 
-        img = pygame.transform.scale(pygame.image.load(texture), (250, 250))
+        img = pygame.transform.scale(pygame.image.load(texture), (250, 350))
 
         img_center = (400, 200)
         texture_rect = img.get_rect(center=img_center)
@@ -63,7 +57,7 @@ class Main:
     
     def landing_menu(self):
         while not self.game_started:
-            self.screen.fill(self.green)
+            self.screen.fill(self.lgray)
             self._draw_logo(self.screen)
             
             pygame.draw.rect(self.screen, self.gray, self.start_button_rect)
