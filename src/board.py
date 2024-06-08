@@ -292,8 +292,8 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move, bool):
                             piece.add_moves(move)
-                        else:
-                            self.checkmate = True
+                        # else:
+                        #     self.checkmate = True
                     else:
                         piece.add_moves(move)
 
