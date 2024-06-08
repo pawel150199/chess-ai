@@ -44,6 +44,7 @@ class Board:
 
         # move
         piece.moved = True
+        print("XD")
 
         # clear valid moves
         piece.clear_moves()
