@@ -1,19 +1,22 @@
 from square import Square
 from move import Move
 from piece import Bishop, Pawn, King, Knight, Queen, Rook
-from exception import CheckmateException
 from const import WIDTH, HEIGHT, ROWS, COLS, SQSIZE
 import copy
-import pygame
+
 
 
 class Board:
     def __init__(self) -> None:
         self.squares = [[0,0,0,0,0,0,0,0] for col in range(COLS)]
         self.last_move = None
+        self.checkmate = False
         self._create()
         self._add_pieces('white')
         self._add_pieces('black')
+    
+    def check_checkmate(self):
+        return self.checkmate
     
     def move(self, piece, move):
         initial_square = move.initial_square
@@ -21,7 +24,7 @@ class Board:
 
         en_passant_empty = self.squares[final_square.row][final_square.col].isempty()
 
-        # debug info wit hconsole move update
+        # debug info with console move update
         self.squares[initial_square.row][initial_square.col].piece = None
         self.squares[final_square.row][final_square.col].piece = piece
 
@@ -46,7 +49,6 @@ class Board:
 
         # move
         piece.moved = True
-        print("XD")
 
         # clear valid moves
         piece.clear_moves()
@@ -84,6 +86,7 @@ class Board:
                             return True
         
         return False
+    
     
     def check_promotion(self, piece, final_position):
         if final_position.row == 0 or final_position.row == 7:
@@ -133,8 +136,7 @@ class Board:
                         piece.add_moves(move)
                 else: break
             else: 
-                print('szach mat_3')
-                raise CheckmateException()
+                self.checkmate = True
 
         # diagonal moves
         possible_move_row = row + piece.dir
@@ -153,8 +155,7 @@ class Board:
                         if not self.in_check(piece, move, bool):
                             piece.add_moves(move)
                         else:
-                            print('szach mat_4')
-                            raise CheckmateException()
+                            self.checkmate = True
                     else:
                         piece.add_moves(move)
 
@@ -178,8 +179,7 @@ class Board:
                             if not self.in_check(piece, move, bool):
                                 piece.add_moves(move)
                             else:
-                                print('szach mat_5')
-                                raise CheckmateException()
+                                self.checkmate = True
                         else:
                             piece.add_moves(move)
         
@@ -198,8 +198,7 @@ class Board:
                             if not self.in_check(piece, move, bool):
                                 piece.add_moves(move)
                             else:
-                                print('szach mat_6')
-                                raise CheckmateException()
+                                self.checkmate = True
                         else:
                             piece.add_moves(move)
 
@@ -293,7 +292,8 @@ class Board:
                     if bool:
                         if not self.in_check(piece, move, bool):
                             piece.add_moves(move)
-                        else: break
+                        else: 
+                            self.checkmate = True
                     else:
                         piece.add_moves(move)
 
@@ -358,7 +358,7 @@ class Board:
                                     piece.add_moves(moveK)
                                 else:
                                     print('szach mat_1')
-                                    raise CheckmateException()
+                                    self.checkmate = True
                             else:
                                 right_rook.add_moves(moveR)
                                 piece.add_moves(moveK)
@@ -385,7 +385,7 @@ class Board:
                                 piece.add_moves(move)
                             else:
                                 print('szach mat_2')
-                                raise CheckmateException()
+                                self.checkmate = True
                         else:
                             # print(move)
                             piece.add_moves(move)
