@@ -20,7 +20,7 @@ class Board:
         en_passant_empty = self.squares[final_square.row][final_square.col].isempty()
 
         # debug info wit hconsole move update
-        self.squares[initial_square.row][initial_square.row].piece = None
+        self.squares[initial_square.row][initial_square.col].piece = None
         self.squares[final_square.row][final_square.col].piece = piece
 
         if isinstance(piece, Pawn):
