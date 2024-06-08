@@ -27,7 +27,7 @@ class Main:
         self.button_font = pygame.font.Font(None, 90)
             
         # colors
-        self.green = (0, 255, 0)
+        self.green = (76, 153, 0)
         self.black = (0, 0, 0)
         self.gray = (100, 100, 100)
 
