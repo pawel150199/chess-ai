@@ -168,7 +168,7 @@ class Board:
                         move = Move(initial_square, final_square)
                         
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move, bool):
                                 piece.add_moves(move)
                         else:
                             piece.add_moves(move)
@@ -185,7 +185,7 @@ class Board:
                         move = Move(initial_square, final_square)
                         
                         if bool:
-                            if not self.in_check(piece, move):
+                            if not self.in_check(piece, move, bool):
                                 piece.add_moves(move)
                         else:
                             piece.add_moves(move)
@@ -278,7 +278,7 @@ class Board:
                     move = Move(initial_square, final_square)
 
                     if bool:
-                        if not self.in_check(piece, move):
+                        if not self.in_check(piece, move, bool):
                             piece.add_moves(move)
                         else: break
                     else:
@@ -309,7 +309,7 @@ class Board:
                             moveK = Move(initial_square, final_square)
 
                             if bool:
-                                if not self.in_check(piece, moveK) and not self.in_check(left_rook, moveR):
+                                if not self.in_check(piece, moveK, bool) and not self.in_check(left_rook, moveR, bool):
                                     left_rook.add_moves(moveR)
                                     piece.add_moves(moveK)
                             else:
