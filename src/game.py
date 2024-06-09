@@ -75,13 +75,13 @@ class Game:
 
     def set_hover(self, row, col):
         self.hovered_sqr = self.board.squares[row][col]
-    
+
     def select_piece(self, piece):
         self.selected_piece = piece
-    
+
     def unselect_piece(self):
         self.selected_piece = None
-    
+
     def change_gamemode(self):
         self.gamemode = 'ai' if self.gamemode == 'pvp' else 'pvp'
 

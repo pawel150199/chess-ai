@@ -19,13 +19,13 @@ class Node(object):
         weights = 0
         for child in self.children:
             weights += child.weight
-        
+
         for child in self.children:
             child.prob = (child.weight / weights) * 100
 
     def get_child(self, idx):
         return self.children[idx]
-    
+
     def choose_child(self, weighted=True):
         if not weighted: return self.children[0]
 
@@ -36,4 +36,4 @@ class Node(object):
         for child in self.children:
             if random <= child.prob + c:
                 return child.value
-            c += child.prob 
+            c += child.prob

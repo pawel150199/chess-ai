@@ -12,7 +12,7 @@ class AutonomyPlayer:
         self.color = 'black'
         self.game_moves = []
         self.explored = 0
-    
+
 
     def threats(self, board, piece):
         eval = 0
@@ -23,13 +23,13 @@ class AutonomyPlayer:
                     # checks
                     if attacked.piece.name == 'king':
                         eval += attacked.piece.value / 10500
-                    
+
                     # threat
                     else:
                         eval += attacked.piece.value / 45
 
         return eval
-    
+
     def static_eval(self, board):
         # var
         eval = 0
@@ -48,8 +48,8 @@ class AutonomyPlayer:
                     else: eval += 0.003 * len(piece.moves)
                     # checks
                     eval += self.threats(board, piece)
-                    
-        
+
+
         eval = round(eval, 5)
         return eval
 
@@ -61,13 +61,13 @@ class AutonomyPlayer:
                 if square.has_team_piece(color):
                     board.calc_moves(square.piece, square.row, square.col)
                     moves += square.piece.moves
-        
+
         return moves
 
     def minimax(self, board, depth, maximizing, alpha, beta):
         if depth == 0:
             return self.static_eval(board), None # eval, move
-        
+
         # white
         if maximizing:
             max_eval = -math.inf
@@ -90,7 +90,7 @@ class AutonomyPlayer:
                 best_move = moves[0]
 
             return max_eval, best_move # eval, move
-        
+
         # black
         elif not maximizing:
             min_eval = math.inf
@@ -108,12 +108,12 @@ class AutonomyPlayer:
 
                 beta = min(beta, min_eval)
                 if beta <= alpha: break
-            
+
             if not best_move:
                 idx = random.randrange(0, len(moves))
                 best_move = moves[idx]
 
-            return min_eval, best_move 
+            return min_eval, best_move
 
     def eval(self, main_board):
         self.explored = 0
@@ -125,26 +125,26 @@ class AutonomyPlayer:
         # minimax engine
         if self.engine == 'minimax':
             print('\nFinding best move...')
-                        
+
             # minimax initial call
             eval, move = self.minimax(main_board, self.depth, False, -math.inf, math.inf)
-            
+
             # printing
             print('\n- Initial eval:',self.static_eval(main_board))
             print('- Final eval:', eval)
             print('- Boards explored', self.explored)
             if eval >= 5000: print('* White MATE!')
             if eval <= -5000: print('* Black MATE!')
-            
+
         self.game_moves.append(move)
-        
+
         return move
 
     def heatmap(self, piece, row, col):
         hmp = 0
         if piece.name == 'pawn':
             if piece.color == 'black':
-                hmp = [ 
+                hmp = [
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
                     [0.02, 0.01, 0.00, 0.00, 0.00, 0.00, 0.01, 0.02],
                     [0.01, 0.01, 0.03, 0.06, 0.06, 0.03, 0.01, 0.01],
@@ -155,7 +155,7 @@ class AutonomyPlayer:
                     [9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00],
             ]
             elif piece.color == 'white':
-                hmp = [ 
+                hmp = [
                     [9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00, 9.00],
                     [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10],
                     [0.07, 0.07, 0.08, 0.09, 0.09, 0.08, 0.07, 0.07],
@@ -167,7 +167,7 @@ class AutonomyPlayer:
             ]
 
         elif piece.name == 'knight':
-            hmp = [ 
+            hmp = [
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
                     [0.00, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.00],
                     [0.00, 0.02, 0.06, 0.05, 0.05, 0.06, 0.02, 0.00],
@@ -179,7 +179,7 @@ class AutonomyPlayer:
             ]
 
         elif piece.name == 'bishop':
-            hmp = [ 
+            hmp = [
                     [0.02, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.02],
                     [0.01, 0.05, 0.03, 0.03, 0.03, 0.03, 0.05, 0.01],
                     [0.01, 0.03, 0.07, 0.05, 0.05, 0.07, 0.03, 0.01],
@@ -189,10 +189,10 @@ class AutonomyPlayer:
                     [0.01, 0.05, 0.03, 0.03, 0.03, 0.03, 0.05, 0.01],
                     [0.02, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.02],
             ]
-        
+
         elif piece.name == 'king':
             if piece.color == 'black':
-                hmp = [ 
+                hmp = [
                     [0.05, 0.50, 0.10, 0.00, 0.00, 0.00, 0.10, 0.05],
                     [0.02, 0.02, 0.00, 0.00, 0.00, 0.00, 0.02, 0.02],
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
@@ -202,9 +202,9 @@ class AutonomyPlayer:
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
                 ]
-            
+
             elif piece.color == 'white':
-                hmp = [ 
+                hmp = [
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
@@ -216,7 +216,7 @@ class AutonomyPlayer:
                 ]
 
         else :
-            hmp = [ 
+            hmp = [
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
                     [0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00],
@@ -229,4 +229,3 @@ class AutonomyPlayer:
 
         eval = -hmp[row][col] if piece.color == 'black' else hmp[row][col]
         return eval
-    

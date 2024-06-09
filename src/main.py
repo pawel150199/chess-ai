@@ -76,7 +76,7 @@ class Main:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if start_button_rect.collidepoint(event.pos):
                         self.game_started = True
-                    
+
                     if start_ai_button_rect.collidepoint(event.pos):
                         self.game.change_gamemode()
                         self.game_started = True
@@ -216,7 +216,7 @@ class Main:
                                 game.unselect_piece()
                                 game.show_pieces(screen)
                                 pygame.display.update()
-                                
+
                                 # find move
                                 move = ai.eval(board)
 
@@ -224,7 +224,7 @@ class Main:
                                 final_square = move.final_square
                                 piece = board.squares[initial_square.row][initial_square.col].piece
                                 board.move(piece, move)
-                
+
                                 game.show_background(screen)
                                 game.show_pieces(screen)
                                 # next -> AI
