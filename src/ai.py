@@ -6,7 +6,7 @@ from const import *
 from piece import *
 
 class AutonomyPlayer:
-    def __init__(self, engine='minimax', depth=3):
+    def __init__(self, engine='minimax', depth=2):
         self.engine = engine
         self.depth = depth
         self.color = 'black'
