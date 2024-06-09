@@ -8,7 +8,7 @@ To run the board do these steps:
 
 ## Special keyboard keys
 During the game you can use special keyboard keys
-1. Press <R> for restart the game.
+1. Press `R` for restart the game.
 
 ## AI
 * MiniMax algorithm
