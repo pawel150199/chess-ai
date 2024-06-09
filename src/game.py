@@ -1,4 +1,5 @@
 import pygame
+from ai import AutonomyPlayer
 from board import Board
 from dragger import Dragger
 from configuration import Config
@@ -8,8 +9,11 @@ from const import WIDTH, HEIGHT, ROWS, COLS, SQSIZE, GREEN, WHITE
 
 class Game:
     def __init__(self):
+        self.ai = AutonomyPlayer()
         self.next_player = 'white'
         self.hovered_sqr = None
+        self.select_piece = None
+        self.gamemode = 'pvp'
         self.board = Board()
         self.dragger = Dragger()
         self.config = Config()
@@ -40,7 +44,6 @@ class Game:
     def show_moves(self, surface):
         if self.dragger.dragging:
             piece = self.dragger.piece
-            # print(piece.moves)
             for move in piece.moves:
                 color = '#C86464' if (move.final_square.row + move.final_square.col) % 2 == 0 else '#C84646'
                 rect = (move.final_square.col * SQSIZE, move.final_square.row * SQSIZE, SQSIZE, SQSIZE)
@@ -72,6 +75,16 @@ class Game:
 
     def set_hover(self, row, col):
         self.hovered_sqr = self.board.squares[row][col]
+    
+    def select_piece(self, piece):
+        self.selected_piece = piece
+    
+    def unselect_piece(self):
+        self.selected_piece = None
+    
+    def change_gamemode(self):
+        self.gamemode = 'ai' if self.gamemode == 'pvp' else 'pvp'
+
 
     def reset(self):
         self.__init__()

@@ -6,6 +6,7 @@ from const import WIDTH, HEIGHT, ROWS, COLS, SQSIZE
 from game import Game
 from square import Square
 from move import Move
+from ai import AutonomyPlayer
 
 
 class Main:
@@ -52,16 +53,19 @@ class Main:
 
     def landing_menu(self):
         start_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 25, self.button_width, self.button_height)
-        exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 150, self.button_width, self.button_height)
+        start_ai_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 150, self.button_width, self.button_height)
+        exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 275, self.button_width, self.button_height)
 
         while not self.game_started:
             self.screen.fill(self.lgray)
             self._draw_logo(self.screen)
 
             pygame.draw.rect(self.screen, self.gray, start_button_rect)
+            pygame.draw.rect(self.screen, self.gray, start_ai_button_rect)
             pygame.draw.rect(self.screen, self.gray, exit_button_rect)
 
             self.draw_text('Start Game', self.button_font, self.black, self.screen, start_button_rect.centerx, start_button_rect.centery)
+            self.draw_text('Start Game vs AI', self.button_font, self.black, self.screen, start_ai_button_rect.centerx, start_ai_button_rect.centery)
             self.draw_text('Exit', self.button_font, self.black, self.screen, exit_button_rect.centerx, exit_button_rect.centery)
 
             for event in pygame.event.get():
@@ -71,6 +75,10 @@ class Main:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if start_button_rect.collidepoint(event.pos):
+                        self.game_started = True
+                    
+                    if start_ai_button_rect.collidepoint(event.pos):
+                        self.game.change_gamemode()
                         self.game_started = True
 
                     if exit_button_rect.collidepoint(event.pos):
@@ -114,6 +122,7 @@ class Main:
     def mainloop(self):
         screen = self.screen
         game = self.game
+        ai = self.game.ai
         board = self.game.board
         dragger = self.game.dragger
 
@@ -192,7 +201,6 @@ class Main:
 
                         # check if it is valid move
                         if board.valid_move(dragger.piece, move):
-                            captured = board.squares[released_row][released_col].has_piece()
                             board.move(dragger.piece, move)
 
                             board.set_true_en_passant(dragger.piece)
@@ -203,7 +211,26 @@ class Main:
                             # next turn
                             game.next_turn()
 
+                            if game.gamemode == 'ai':
+                                # update
+                                game.unselect_piece()
+                                game.show_pieces(screen)
+                                pygame.display.update()
+                                
+                                # find move
+                                move = ai.eval(board)
 
+                                initial_square = move.initial_square
+                                final_square = move.final_square
+                                piece = board.squares[initial_square.row][initial_square.col].piece
+                                board.move(piece, move)
+                
+                                game.show_background(screen)
+                                game.show_pieces(screen)
+                                # next -> AI
+                                game.next_turn()
+
+                    game.unselect_piece()
                     dragger.undrag_piece(dragger.piece)
 
                 if board.checkmate:
