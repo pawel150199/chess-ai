@@ -91,7 +91,11 @@ class Main:
         looping = True
         restart_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 100, self.button_width, self.button_height)
         exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 205, self.button_width, self.button_height)
-        winner = "black" if self.game.next_player == "white" else "white"
+
+        if self.game.gamemode == 'ai':
+            winner = self.game.next_player
+        else:
+            winner = "black" if self.game.next_player == "white" else "white"
 
         while looping:
             self.screen.fill(self.lgray)
@@ -220,10 +224,11 @@ class Main:
                                 # find move
                                 move = ai.eval(board)
 
-                                initial_square = move.initial_square
-                                final_square = move.final_square
-                                piece = board.squares[initial_square.row][initial_square.col].piece
-                                board.move(piece, move)
+                                if move:
+                                    initial_square = move.initial_square
+                                    final_square = move.final_square
+                                    piece = board.squares[initial_square.row][initial_square.col].piece
+                                    board.move(piece, move)
 
                                 game.show_background(screen)
                                 game.show_pieces(screen)
@@ -233,7 +238,7 @@ class Main:
                     game.unselect_piece()
                     dragger.undrag_piece(dragger.piece)
 
-                if board.checkmate:
+                if board.checkmate or ai.checkmate:
                     self.end_menu()
                     game.reset()
                     screen = self.screen
