@@ -90,7 +90,7 @@ class AutonomyPlayer:
 
             if len(moves) == 0:
                 self.checkmate = True
-                
+
             if not best_move and len(moves) != 0:
                 best_move = moves[0]
 
@@ -118,7 +118,7 @@ class AutonomyPlayer:
 
             if len(moves) == 0:
                 self.checkmate = True
-                
+
             if not best_move and len(moves) != 0:
                 best_move = moves[0]
 
@@ -142,10 +142,10 @@ class AutonomyPlayer:
             print('\n- Initial eval:',self.static_eval(main_board))
             print('- Final eval:', eval)
             print('- Boards explored', self.explored)
-            if eval >= 5000: 
+            if eval >= 5000:
                 self.checkmate = True
                 print('* White MATE!')
-            if eval <= -5000: 
+            if eval <= -5000:
                 self.checkmate = True
                 print('* Black MATE!')
 

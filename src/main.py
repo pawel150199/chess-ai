@@ -237,7 +237,7 @@ class Main:
 
                     game.unselect_piece()
                     dragger.undrag_piece(dragger.piece)
-                
+
                 if board.checkmate or ai.checkmate:
                     self.end_menu()
                     game.reset()
