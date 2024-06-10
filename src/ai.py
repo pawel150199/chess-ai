@@ -11,6 +11,7 @@ class AutonomyPlayer:
         self.depth = depth
         self.color = 'black'
         self.game_moves = []
+        self.checkmate = False
         self.explored = 0
 
 
@@ -70,6 +71,7 @@ class AutonomyPlayer:
 
         # white
         if maximizing:
+            best_move = None
             max_eval = -math.inf
             moves = self.get_moves(board, 'white')
             for move in moves:
@@ -86,13 +88,17 @@ class AutonomyPlayer:
                 alpha = max(alpha, max_eval)
                 if beta <= alpha: break
 
-            if not best_move:
+            if len(moves) == 0:
+                self.checkmate = True
+                
+            if not best_move and len(moves) != 0:
                 best_move = moves[0]
 
-            return max_eval, best_move # eval, move
+            return max_eval, best_move
 
         # black
         elif not maximizing:
+            best_move = None
             min_eval = math.inf
             moves = self.get_moves(board, 'black')
             for move in moves:
@@ -109,9 +115,12 @@ class AutonomyPlayer:
                 beta = min(beta, min_eval)
                 if beta <= alpha: break
 
-            if not best_move:
-                idx = random.randrange(0, len(moves))
-                best_move = moves[idx]
+
+            if len(moves) == 0:
+                self.checkmate = True
+                
+            if not best_move and len(moves) != 0:
+                best_move = moves[0]
 
             return min_eval, best_move
 
@@ -133,8 +142,12 @@ class AutonomyPlayer:
             print('\n- Initial eval:',self.static_eval(main_board))
             print('- Final eval:', eval)
             print('- Boards explored', self.explored)
-            if eval >= 5000: print('* White MATE!')
-            if eval <= -5000: print('* Black MATE!')
+            if eval >= 5000: 
+                self.checkmate = True
+                print('* White MATE!')
+            if eval <= -5000: 
+                self.checkmate = True
+                print('* Black MATE!')
 
         self.game_moves.append(move)
 
