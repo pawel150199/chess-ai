@@ -3,6 +3,7 @@ import math
 import chess
 import chess.engine
 import random
+import numpy as np
 
 from const import *
 from piece import *
@@ -46,6 +47,7 @@ class AutonomyPlayer:
                     eval += piece.value
                     # heatmap
                     eval += self.heatmap(piece, row, col)
+                    print(f"XD: {eval}")
                     # moves
                     if piece.name != 'queen': eval += 0.01 * len(piece.moves)
                     else: eval += 0.003 * len(piece.moves)
@@ -68,6 +70,7 @@ class AutonomyPlayer:
         return moves
 
     def minimax(self, board, depth, maximizing, alpha, beta):
+        self.create_input(board)
         if depth == 0:
             return self.static_eval(board), None # eval, move
 
@@ -222,7 +225,25 @@ class AutonomyPlayer:
         self.game_moves.append(move)
 
         return move
+    
+    def create_input(self, board):
+        figures = ["pawn", "knight", "bishop", "rook", "queen", "king"]
+        tab = np.zeros((12,8,8))
 
+        for fig_idx, fig in enumerate(figures):
+            for col in range(COLS):
+                for row in range(ROWS):
+                    if board.squares[row][col].piece != None:
+                        print(board.squares[row][col].piece.name)
+                        if board.squares[row][col].piece.name == fig and board.squares[row][col].piece.color == "white":
+                            tab[fig_idx, row, col] = 1
+                        
+                        if board.squares[row][col].piece.name == fig and board.squares[row][col].piece.color == "black":
+                            tab[fig_idx + 6, row, col] = 1
+        
+        print(tab)
+        #return tab
+        
     def heatmap(self, piece, row, col):
         hmp = 0
         if piece.name == 'pawn':
