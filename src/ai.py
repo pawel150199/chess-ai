@@ -1,12 +1,13 @@
 import copy
 import math
-import random
+import numpy as np
+import tensorflow.keras.models as models
 
 from const import *
 from piece import *
 
 class AutonomyPlayer:
-    def __init__(self, engine='minimax', depth=2):
+    def __init__(self, engine='nn', depth=2):
         self.engine = engine
         self.depth = depth
         self.color = 'black'
@@ -44,6 +45,7 @@ class AutonomyPlayer:
                     eval += piece.value
                     # heatmap
                     eval += self.heatmap(piece, row, col)
+                    print(f"XD: {eval}")
                     # moves
                     if piece.name != 'queen': eval += 0.01 * len(piece.moves)
                     else: eval += 0.003 * len(piece.moves)
@@ -74,6 +76,7 @@ class AutonomyPlayer:
             best_move = None
             max_eval = -math.inf
             moves = self.get_moves(board, 'white')
+            print(moves)
             for move in moves:
                 self.explored += 1
                 piece = board.squares[move.initial_square.row][move.initial_square.col].piece
@@ -124,6 +127,71 @@ class AutonomyPlayer:
 
             return min_eval, best_move
 
+
+    def minimax_nn(self, board, depth, maximizing, alpha, beta):
+        if depth == 0:
+            return self.nn_eval(board)
+
+        # white
+        if maximizing:
+            best_move = None
+            max_eval = -math.inf
+            moves = self.get_moves(board, 'white')
+            print(moves)
+            for move in moves:
+                self.explored += 1
+                piece = board.squares[move.initial_square.row][move.initial_square.col].piece
+                temp_board = copy.deepcopy(board)
+                temp_board.move(piece, move)
+                piece.moved = False
+                eval = self.minimax_nn(temp_board, depth-1, False, alpha, beta)
+                print(eval)
+                if eval > max_eval:
+                    max_eval = eval
+                    best_move = move
+
+                alpha = max(alpha, max_eval)
+                if beta <= alpha:
+                    break
+
+            if len(moves) == 0:
+                self.checkmate = True
+
+            if not best_move and len(moves) != 0:
+                best_move = moves[0]
+
+            return max_eval, best_move
+
+        # black
+        elif not maximizing:
+            best_move = None
+            min_eval = math.inf
+            moves = self.get_moves(board, 'black')
+            for move in moves:
+                self.explored += 1
+                piece = board.squares[move.initial_square.row][move.initial_square.col].piece
+                temp_board = copy.deepcopy(board)
+                temp_board.move(piece, move)
+                piece.moved = False
+                eval = self.minimax_nn(temp_board, depth-1, True, alpha, beta)
+                print(eval)
+                if eval[0] < min_eval:
+                    min_eval = eval[0]
+                    best_move = move
+
+                beta = min(beta, min_eval)
+                if beta <= alpha:
+                    break
+
+            if len(moves) == 0:
+                self.checkmate = True
+
+            if not best_move and len(moves) != 0:
+                best_move = moves[0]
+
+            return min_eval, best_move
+
+
     def eval(self, main_board):
         self.explored = 0
 
@@ -149,9 +217,52 @@ class AutonomyPlayer:
                 self.checkmate = True
                 print('* Black MATE!')
 
-        self.game_moves.append(move)
+        elif self.engine == 'nn':
+            print('\nFinding best move...')
 
+            # minimax initial call
+            eval, move = self.minimax_nn(main_board, self.depth, False, -math.inf, math.inf)
+
+            # printing
+            print('\n- Initial eval:',self.static_eval(main_board))
+            print('- Final eval:', eval)
+            print('- Boards explored', self.explored)
+            #if eval >= 5000:
+            #    self.checkmate = True
+            #    print('* White MATE!')
+            #if eval <= -5000:
+            #    self.checkmate = True
+            #    print('* Black MATE!')
+
+        self.game_moves.append(move)
         return move
+
+
+    def nn_eval(self, board):
+        input = self.create_input(board)
+        input = input.reshape(1,12,8,8)
+        print(input.shape)
+        model =  models.load_model('model.h5')
+        return model.predict(input)[0][0]
+
+
+    def create_input(self, board):
+        figures = ["pawn", "knight", "bishop", "rook", "queen", "king"]
+        tab = np.zeros((12,8,8))
+
+        for fig_idx, fig in enumerate(figures):
+            for col in range(COLS):
+                for row in range(ROWS):
+                    if board.squares[row][col].piece != None:
+                        print(board.squares[row][col].piece.name)
+                        if board.squares[row][col].piece.name == fig and board.squares[row][col].piece.color == "white":
+                            tab[fig_idx, row, col] = 1
+
+                        if board.squares[row][col].piece.name == fig and board.squares[row][col].piece.color == "black":
+                            tab[fig_idx + 6, row, col] = 1
+
+        return tab
+
 
     def heatmap(self, piece, row, col):
         hmp = 0
