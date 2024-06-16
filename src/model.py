@@ -50,3 +50,5 @@ def train():
 
 if __name__ == "__main__":
     train()
+    #new_model = models.load_model('model.h5')
+    #new_model.summary()

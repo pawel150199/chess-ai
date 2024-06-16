@@ -1,15 +1,13 @@
 import copy
 import math
-import chess
-import chess.engine
-import random
 import numpy as np
+import tensorflow.keras.models as models
 
 from const import *
 from piece import *
 
 class AutonomyPlayer:
-    def __init__(self, engine='minimax', depth=2):
+    def __init__(self, engine='nn', depth=2):
         self.engine = engine
         self.depth = depth
         self.color = 'black'
@@ -70,7 +68,6 @@ class AutonomyPlayer:
         return moves
 
     def minimax(self, board, depth, maximizing, alpha, beta):
-        self.create_input(board)
         if depth == 0:
             return self.static_eval(board), None # eval, move
 
@@ -129,17 +126,11 @@ class AutonomyPlayer:
                 best_move = moves[0]
 
             return min_eval, best_move
-    
-    def stockfish_score(self, board,  color, depth=10):
-        with chess.engine.SimpleEngine.popen_uci('/content/stockfish') as sf:
-            result = sf.analyse(board, chess.engine.Limit(depth=depth))
-            if color == 'white':
-                return result['score'].white().score()
-            return result['score'].black().score()
-        
-    def stockfish(self, board, depth, maximizing, alpha, beta):
+
+
+    def minimax_nn(self, board, depth, maximizing, alpha, beta):
         if depth == 0:
-            return self.static_eval(board), None
+            return self.nn_eval(board)
 
         # white
         if maximizing:
@@ -153,13 +144,15 @@ class AutonomyPlayer:
                 temp_board = copy.deepcopy(board)
                 temp_board.move(piece, move)
                 piece.moved = False
-                eval = self.stockfish_score(temp_board, color='white', depth=10)
+                eval = self.minimax_nn(temp_board, depth-1, False, alpha, beta)
+                print(eval)
                 if eval > max_eval:
                     max_eval = eval
                     best_move = move
 
                 alpha = max(alpha, max_eval)
-                if beta <= alpha: break
+                if beta <= alpha: 
+                    break
 
             if len(moves) == 0:
                 self.checkmate = True
@@ -180,14 +173,15 @@ class AutonomyPlayer:
                 temp_board = copy.deepcopy(board)
                 temp_board.move(piece, move)
                 piece.moved = False
-                eval = self.stockfish_score(temp_board, color='black', depth=10)
-                if eval < min_eval:
-                    min_eval = eval
+                eval = self.minimax_nn(temp_board, depth-1, True, alpha, beta)
+                print(eval)
+                if eval[0] < min_eval:
+                    min_eval = eval[0]
                     best_move = move
 
                 beta = min(beta, min_eval)
-                if beta <= alpha: break
-
+                if beta <= alpha:
+                    break
 
             if len(moves) == 0:
                 self.checkmate = True
@@ -196,6 +190,7 @@ class AutonomyPlayer:
                 best_move = moves[0]
 
             return min_eval, best_move
+        
 
     def eval(self, main_board):
         self.explored = 0
@@ -222,9 +217,34 @@ class AutonomyPlayer:
                 self.checkmate = True
                 print('* Black MATE!')
 
-        self.game_moves.append(move)
+        elif self.engine == 'nn':
+            print('\nFinding best move...')
 
+            # minimax initial call
+            eval, move = self.minimax_nn(main_board, self.depth, False, -math.inf, math.inf)
+
+            # printing
+            print('\n- Initial eval:',self.static_eval(main_board))
+            print('- Final eval:', eval)
+            print('- Boards explored', self.explored)
+            #if eval >= 5000:
+            #    self.checkmate = True
+            #    print('* White MATE!')
+            #if eval <= -5000:
+            #    self.checkmate = True
+            #    print('* Black MATE!')
+
+        self.game_moves.append(move)
         return move
+    
+
+    def nn_eval(self, board):
+        input = self.create_input(board)
+        input = input.reshape(1,12,8,8)
+        print(input.shape)
+        model =  models.load_model('model.h5')
+        return model.predict(input)[0][0]
+
     
     def create_input(self, board):
         figures = ["pawn", "knight", "bishop", "rook", "queen", "king"]
@@ -240,10 +260,10 @@ class AutonomyPlayer:
                         
                         if board.squares[row][col].piece.name == fig and board.squares[row][col].piece.color == "black":
                             tab[fig_idx + 6, row, col] = 1
+
+        return tab
         
-        print(tab)
-        #return tab
-        
+
     def heatmap(self, piece, row, col):
         hmp = 0
         if piece.name == 'pawn':
