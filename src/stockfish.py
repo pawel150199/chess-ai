@@ -4,7 +4,7 @@ def stockfish_score(self, board,  color, depth=10):
             if color == 'white':
                 return result['score'].white().score()
             return result['score'].black().score()
-        
+
 def stockfish(self, board, depth, maximizing, alpha, beta):
     if depth == 0:
         return self.static_eval(board), None

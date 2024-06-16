@@ -151,7 +151,7 @@ class AutonomyPlayer:
                     best_move = move
 
                 alpha = max(alpha, max_eval)
-                if beta <= alpha: 
+                if beta <= alpha:
                     break
 
             if len(moves) == 0:
@@ -190,7 +190,7 @@ class AutonomyPlayer:
                 best_move = moves[0]
 
             return min_eval, best_move
-        
+
 
     def eval(self, main_board):
         self.explored = 0
@@ -236,7 +236,7 @@ class AutonomyPlayer:
 
         self.game_moves.append(move)
         return move
-    
+
 
     def nn_eval(self, board):
         input = self.create_input(board)
@@ -245,7 +245,7 @@ class AutonomyPlayer:
         model =  models.load_model('model.h5')
         return model.predict(input)[0][0]
 
-    
+
     def create_input(self, board):
         figures = ["pawn", "knight", "bishop", "rook", "queen", "king"]
         tab = np.zeros((12,8,8))
@@ -257,12 +257,12 @@ class AutonomyPlayer:
                         print(board.squares[row][col].piece.name)
                         if board.squares[row][col].piece.name == fig and board.squares[row][col].piece.color == "white":
                             tab[fig_idx, row, col] = 1
-                        
+
                         if board.squares[row][col].piece.name == fig and board.squares[row][col].piece.color == "black":
                             tab[fig_idx + 6, row, col] = 1
 
         return tab
-        
+
 
     def heatmap(self, piece, row, col):
         hmp = 0
