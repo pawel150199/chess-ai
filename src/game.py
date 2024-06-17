@@ -18,7 +18,7 @@ class Game:
         self.dragger = Dragger()
         self.config = Config()
         self.ai = AutonomyPlayer()
-    
+
     def set_engine(self, engine):
         self.ai.set_engine(engine)
 

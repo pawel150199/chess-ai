@@ -85,7 +85,7 @@ class Main:
                         self.game.change_gamemode()
                         self.game.set_engine('minimax')
                         self.game_started = True
-                    
+
                     if start_nn_button_rect.collidepoint(event.pos):
                         self.game.change_gamemode()
                         self.game.set_engine('nn')

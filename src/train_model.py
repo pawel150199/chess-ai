@@ -64,6 +64,6 @@ def train():
 if __name__ == "__main__":
     train()
 
-    # if would liket to view your model 
+    # if would liket to view your model
     # new_model = models.load_model('models/model.h5')
     # new_model.summary()

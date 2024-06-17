@@ -17,7 +17,7 @@ class AutonomyPlayer:
         self.checkmate = False
         self.explored = 0
         self.verbose = verbose
-    
+
     def set_engine(self, engine):
         self.engine = engine
 
