@@ -17,6 +17,10 @@ class Game:
         self.board = Board()
         self.dragger = Dragger()
         self.config = Config()
+        self.ai = AutonomyPlayer()
+
+    def set_engine(self, engine):
+        self.ai.set_engine(engine)
 
     def show_background(self, surface):
         for row in range(ROWS):

@@ -1,6 +1,7 @@
 from turtle import color
 
-ALPHACOLS = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
+ALPHACOLS = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
+
 
 class Square:
     def __init__(self, row, col, piece=None):
@@ -18,7 +19,7 @@ class Square:
     def isempty(self):
         return not self.has_piece()
 
-    def has_team_piece(self,color):
+    def has_team_piece(self, color):
         return self.has_piece() and self.piece.color == color
 
     def has_rival_piece(self, color):
@@ -36,5 +37,5 @@ class Square:
 
     @staticmethod
     def get_alphacol(col):
-        ALPHACOLS = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g', 7: 'h'}
+        ALPHACOLS = {0: "a", 1: "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
         return ALPHACOLS[col]
