@@ -8,14 +8,18 @@ from piece import *
 
 
 class AutonomyPlayer:
-    def __init__(self, engine="nn", depth=2, verbose=False):
+    def __init__(self, engine="nn", depth=2, verbose=0):
         self.engine = engine
         self.depth = depth
+        self.model_path = "models/model.h5"
         self.color = "black"
         self.game_moves = []
         self.checkmate = False
         self.explored = 0
         self.verbose = verbose
+    
+    def set_engine(self, engine):
+        self.engine = engine
 
     def threats(self, board, piece):
         eval = 0
@@ -146,7 +150,6 @@ class AutonomyPlayer:
             best_move = None
             max_eval = -math.inf
             moves = self.get_moves(board, "white")
-            print(moves)
             for move in moves:
                 self.explored += 1
                 piece = board.squares[move.initial_square.row][
@@ -156,7 +159,6 @@ class AutonomyPlayer:
                 temp_board.move(piece, move)
                 piece.moved = False
                 eval = self.minimax_nn(temp_board, depth - 1, False, alpha, beta)
-                print(eval)
                 if eval > max_eval:
                     max_eval = eval
                     best_move = move
@@ -187,7 +189,6 @@ class AutonomyPlayer:
                 temp_board.move(piece, move)
                 piece.moved = False
                 eval = self.minimax_nn(temp_board, depth - 1, True, alpha, beta)
-                print(eval)
                 if eval[0] < min_eval:
                     min_eval = eval[0]
                     best_move = move
@@ -219,7 +220,7 @@ class AutonomyPlayer:
             )
 
             # printing
-            if self.verbose:
+            if self.verbose == 1:
                 print("\n- Initial eval:", self.static_eval(main_board))
                 print("- Final eval:", eval)
                 print("- Boards explored", self.explored)
@@ -237,7 +238,7 @@ class AutonomyPlayer:
             )
 
             # printing
-            if self.verbose:
+            if self.verbose == 1:
                 print("\n- Initial eval:", self.static_eval(main_board))
                 print("- Final eval:", eval)
                 print("- Boards explored", self.explored)
@@ -254,9 +255,8 @@ class AutonomyPlayer:
     def nn_eval(self, board):
         input = self.create_input(board)
         input = input.reshape(1, 12, 8, 8)
-        print(input.shape)
-        model = models.load_model("models/model.h5")
-        return model.predict(input)[0][0]
+        model = models.load_model(self.model_path)
+        return model.predict(input, verbose=self.verbose)[0][0]
 
     def create_input(self, board):
         figures = ["pawn", "knight", "bishop", "rook", "queen", "king"]
@@ -266,7 +266,6 @@ class AutonomyPlayer:
             for col in range(COLS):
                 for row in range(ROWS):
                     if board.squares[row][col].piece != None:
-                        print(board.squares[row][col].piece.name)
                         if (
                             board.squares[row][col].piece.name == fig
                             and board.squares[row][col].piece.color == "white"

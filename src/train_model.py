@@ -45,7 +45,7 @@ def train():
     print(X_train.shape)
     print(y_train.shape)
 
-    model = build_model(16, 2)
+    model = build_model(32, 4)
     model.summary()
     model.fit(
         X_train,
@@ -58,7 +58,7 @@ def train():
             callbacks.EarlyStopping(monitor="loss", patience=15),
         ],
     )
-    model.save("light_model.h5")
+    model.save("large_model.h5")
 
 
 if __name__ == "__main__":

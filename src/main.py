@@ -29,8 +29,8 @@ class Main:
         self.button_font = pygame.font.Font(None, 70)
 
         # Button dimensions
-        self.button_width = 400
-        self.button_height = 100
+        self.button_width = 500
+        self.button_height = 90
 
     def draw_text(self, text, font, color, surface, x, y):
         textobj = font.render(text, True, color)
@@ -52,21 +52,25 @@ class Main:
         surface.blit(img, texture_rect)
 
     def landing_menu(self):
-        start_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 25, self.button_width, self.button_height)
-        start_ai_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 150, self.button_width, self.button_height)
-        exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2 + 275, self.button_width, self.button_height)
+        button_font = pygame.font.Font(None, 55)
+        start_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2.3 + 25, self.button_width, self.button_height)
+        start_minimax_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2.3 + 125, self.button_width, self.button_height)
+        start_nn_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2.3 + 225, self.button_width, self.button_height)
+        exit_button_rect = pygame.Rect((WIDTH - self.button_width) // 2, HEIGHT // 2.3 + 325, self.button_width, self.button_height)
 
         while not self.game_started:
             self.screen.fill(self.lgray)
             self._draw_logo(self.screen)
 
             pygame.draw.rect(self.screen, self.gray, start_button_rect)
-            pygame.draw.rect(self.screen, self.gray, start_ai_button_rect)
+            pygame.draw.rect(self.screen, self.gray, start_minimax_button_rect)
+            pygame.draw.rect(self.screen, self.gray, start_nn_button_rect)
             pygame.draw.rect(self.screen, self.gray, exit_button_rect)
 
-            self.draw_text('Start Game', self.button_font, self.black, self.screen, start_button_rect.centerx, start_button_rect.centery)
-            self.draw_text('Start Game vs AI', self.button_font, self.black, self.screen, start_ai_button_rect.centerx, start_ai_button_rect.centery)
-            self.draw_text('Exit', self.button_font, self.black, self.screen, exit_button_rect.centerx, exit_button_rect.centery)
+            self.draw_text('Multiplayer', button_font, self.black, self.screen, start_button_rect.centerx, start_button_rect.centery)
+            self.draw_text('Minimax', button_font, self.black, self.screen, start_minimax_button_rect.centerx, start_minimax_button_rect.centery)
+            self.draw_text('Neural Network', button_font, self.black, self.screen, start_nn_button_rect.centerx, start_nn_button_rect.centery)
+            self.draw_text('Exit', button_font, self.black, self.screen, exit_button_rect.centerx, exit_button_rect.centery)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -77,8 +81,14 @@ class Main:
                     if start_button_rect.collidepoint(event.pos):
                         self.game_started = True
 
-                    if start_ai_button_rect.collidepoint(event.pos):
+                    if start_minimax_button_rect.collidepoint(event.pos):
                         self.game.change_gamemode()
+                        self.game.set_engine('minimax')
+                        self.game_started = True
+                    
+                    if start_nn_button_rect.collidepoint(event.pos):
+                        self.game.change_gamemode()
+                        self.game.set_engine('nn')
                         self.game_started = True
 
                     if exit_button_rect.collidepoint(event.pos):

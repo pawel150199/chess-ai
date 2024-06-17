@@ -14,11 +14,13 @@ class Game:
         self.hovered_sqr = None
         self.select_piece = None
         self.gamemode = 'pvp'
-        self.engine = 'minimax'
         self.board = Board()
         self.dragger = Dragger()
         self.config = Config()
-        self.ai = AutonomyPlayer(engine=self.engine)
+        self.ai = AutonomyPlayer()
+    
+    def set_engine(self, engine):
+        self.ai.set_engine(engine)
 
     def show_background(self, surface):
         for row in range(ROWS):
